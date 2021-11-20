@@ -1,10 +1,11 @@
 //AGV Machine - Vinay Lanka
+//Updates by Dingo
 
 //Import Motor - Cytron SPG30E-30K
 #include "Motor.h"
 #include <ros.h>
 #include <geometry_msgs/Twist.h>
-#include<PID_v1.h>
+#include <PID_v1.h>
 #include <geometry_msgs/Vector3Stamped.h>
 #include <ros/time.h>
 
@@ -13,8 +14,8 @@ ros::NodeHandle  nh;
 
 #define LOOPTIME 10
 
-Motor right(11,10,20,21);
-Motor left(9,8,18,19);
+Motor right(11,10,20,21);  //Motor1, Motor2, Encoder A, Encoder B
+Motor left(9,8,18,19);  //Motor1, Motor2, Encoder A, Encoder B
 
 volatile long encoder0Pos = 0;    // encoder 1
 volatile long encoder1Pos = 0;    // encoder 2
@@ -73,10 +74,10 @@ void setup() {
   leftPID.SetOutputLimits(-100, 100);
   
 //  Serial.println("Basic Encoder Test:");
-  attachInterrupt(digitalPinToInterrupt(left.en_a), change_left_a, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(left.en_b), change_left_b, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(right.en_a), change_right_a, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(right.en_b), change_right_b, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(left.enc_a), change_left_a, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(left.enc_b), change_left_b, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(right.enc_a), change_right_a, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(right.enc_b), change_right_b, CHANGE);
 }
 
 void loop() {
@@ -113,7 +114,7 @@ void loop() {
     left.rotate(left_output);
     rightPID.Compute();
     right.rotate(right_output);
-//    Serial.print(encoder0Pos);
+//    Serial.print(encoder0Pos); //un-comment this line and the next 2 to have encoder position written to the serial output
 //    Serial.print(",");
 //    Serial.println(encoder1Pos);
   }
@@ -141,9 +142,9 @@ void publishSpeed(double time) {
 void change_left_a(){  
 
   // look for a low-to-high on channel A
-  if (digitalRead(left.en_a) == HIGH) { 
+  if (digitalRead(left.enc_a) == HIGH) { 
     // check channel B to see which way encoder is turning
-    if (digitalRead(left.en_b) == LOW) {  
+    if (digitalRead(left.enc_b) == LOW) {  
       encoder0Pos = encoder0Pos + 1;         // CW
     } 
     else {
@@ -153,7 +154,7 @@ void change_left_a(){
   else   // must be a high-to-low edge on channel A                                       
   { 
     // check channel B to see which way encoder is turning  
-    if (digitalRead(left.en_b) == HIGH) {   
+    if (digitalRead(left.enc_b) == HIGH) {   
       encoder0Pos = encoder0Pos + 1;          // CW
     } 
     else {
@@ -166,9 +167,9 @@ void change_left_a(){
 void change_left_b(){  
 
   // look for a low-to-high on channel B
-  if (digitalRead(left.en_b) == HIGH) {   
+  if (digitalRead(left.enc_b) == HIGH) {   
    // check channel A to see which way encoder is turning
-    if (digitalRead(left.en_a) == HIGH) {  
+    if (digitalRead(left.enc_a) == HIGH) {  
       encoder0Pos = encoder0Pos + 1;         // CW
     } 
     else {
@@ -178,7 +179,7 @@ void change_left_b(){
   // Look for a high-to-low on channel B
   else { 
     // check channel B to see which way encoder is turning  
-    if (digitalRead(left.en_a) == LOW) {   
+    if (digitalRead(left.enc_a) == LOW) {   
       encoder0Pos = encoder0Pos + 1;          // CW
     } 
     else {
@@ -194,9 +195,9 @@ void change_left_b(){
 void change_right_a(){  
 
   // look for a low-to-high on channel A
-  if (digitalRead(right.en_a) == HIGH) { 
+  if (digitalRead(right.enc_a) == HIGH) { 
     // check channel B to see which way encoder is turning
-    if (digitalRead(right.en_b) == LOW) {  
+    if (digitalRead(right.enc_b) == LOW) {  
       encoder1Pos = encoder1Pos - 1;         // CW
     } 
     else {
@@ -206,7 +207,7 @@ void change_right_a(){
   else   // must be a high-to-low edge on channel A                                       
   { 
     // check channel B to see which way encoder is turning  
-    if (digitalRead(right.en_b) == HIGH) {   
+    if (digitalRead(right.enc_b) == HIGH) {   
       encoder1Pos = encoder1Pos - 1;          // CW
     } 
     else {
@@ -219,9 +220,9 @@ void change_right_a(){
 void change_right_b(){  
 
   // look for a low-to-high on channel B
-  if (digitalRead(right.en_b) == HIGH) {   
+  if (digitalRead(right.enc_b) == HIGH) {   
    // check channel A to see which way encoder is turning
-    if (digitalRead(right.en_a) == HIGH) {  
+    if (digitalRead(right.enc_a) == HIGH) {  
       encoder1Pos = encoder1Pos - 1;         // CW
     } 
     else {
@@ -231,7 +232,7 @@ void change_right_b(){
   // Look for a high-to-low on channel B
   else { 
     // check channel B to see which way encoder is turning  
-    if (digitalRead(right.en_a) == LOW) {   
+    if (digitalRead(right.enc_a) == LOW) {   
       encoder1Pos = encoder1Pos - 1;          // CW
     } 
     else {

@@ -2,15 +2,15 @@
 #include "Motor.h"
 
 
-Motor::Motor(int plus, int minus, int en_a, int en_b) {
+Motor::Motor(int plus, int minus, int enc_a, int enc_b) {
   pinMode(plus,OUTPUT);
   pinMode(minus,OUTPUT);
-  pinMode(en_a,INPUT_PULLUP);
-  pinMode(en_b,INPUT_PULLUP);
+  pinMode(enc_a,INPUT_PULLUP);
+  pinMode(enc_b,INPUT_PULLUP);
   Motor::plus = plus;
   Motor::minus = minus;
-  Motor::en_a = en_a;
-  Motor::en_b = en_b;
+  Motor::enc_a = enc_a;
+  Motor::enc_b = enc_b;
 }
 
 void Motor::rotate(int value) {
